@@ -1,0 +1,153 @@
+/* src/components/AboutCarousel.css */
+.about-carousel {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 3rem 0;
+  height: 360px;
+}
+.carousel-slide {
+  width: 80%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.6);
+  animation: fadeSlide 1s ease-in-out;
+}
+.carousel-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.carousel-overlay h3 {
+  margin: 0 0 1rem;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 2rem;
+  color: var(--gold);
+}
+.carousel-overlay p {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  max-height: 55%;
+  overflow-y: auto;
+}
+.carousel-btn {
+  background: rgba(0,0,0,0.4);
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s;
+  z-index: 2;
+}
+.carousel-btn:hover {
+  background: rgba(0,0,0,0.7);
+}
+.prev { position: absolute; left: 10%; }
+.next { position: absolute; right: 10%; }
+
+/* Анімація появи слайда */
+@keyframes fadeSlide {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ==========================================
+   RESPONSIVE: ADAPTATION FOR DIFFERENT SCREENS
+========================================== */
+
+/* Мобільні телефони — вузькі екрани */
+@media (max-width: 480px) {
+  .about-carousel {
+    height: 250px;
+    margin: 2rem 0;
+  }
+  .carousel-slide {
+    width: 95%;
+  }
+  .carousel-overlay {
+    padding: 1rem;
+  }
+  .carousel-overlay h3 {
+    font-size: 1.5rem;
+  }
+  .carousel-overlay p {
+    font-size: 0.95rem;
+  }
+  .carousel-btn {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1.5rem;
+  }
+  .prev { left: 5%; }
+  .next { right: 5%; }
+}
+
+/* Планшети — середні екрани */
+@media (min-width: 481px) and (max-width: 768px) {
+  .about-carousel {
+    height: 300px;
+    margin: 2.5rem 0;
+  }
+  .carousel-slide {
+    width: 90%;
+  }
+  .carousel-overlay {
+    padding: 1.5rem;
+  }
+  .carousel-overlay h3 {
+    font-size: 1.75rem;
+  }
+  .carousel-overlay p {
+    font-size: 1rem;
+  }
+  .carousel-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+    font-size: 1.75rem;
+  }
+  .prev { left: 8%; }
+  .next { right: 8%; }
+}
+
+/* Десктопи — широкі екрани */
+@media (min-width: 769px) {
+  .about-carousel {
+    height: 360px;
+    margin: 3rem 0;
+  }
+  .carousel-slide {
+    width: 80%;
+  }
+  .carousel-overlay {
+    padding: 2rem;
+  }
+  .carousel-overlay h3 {
+    font-size: 2rem;
+  }
+  .carousel-overlay p {
+    font-size: 1.1rem;
+  }
+  .carousel-btn {
+    width: 3rem;
+    height: 3rem;
+    font-size: 2rem;
+  }
+  .prev { left: 10%; }
+  .next { right: 10%; }
+}

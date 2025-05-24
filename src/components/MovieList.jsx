@@ -1,10 +1,9 @@
-import React, { useState } from 'react';
+// src/components/MovieList.jsx
+import React, {useState} from 'react';
 import MovieCard from './MovieCard';
-import { movies } from '../data/movies';
-import '../index.css';
 
-export default function MovieList() {
-  const [query, setQuery] = useState('');
+export default function MovieList({movies}) {
+  const [ query, setQuery ] = useState('');
   const filtered = movies.filter(m =>
     m.title.toLowerCase().includes(query.toLowerCase())
   );
@@ -20,9 +19,17 @@ export default function MovieList() {
       />
       <ul className="movie-list">
         {filtered.map(movie => (
-          <MovieCard key={movie.id} movie={movie} />
+          <li key={movie.id}>
+            <MovieCard
+              poster={movie.poster}
+              title={movie.title}
+              desc={movie.desc}
+              meta={movie.meta}
+            />
+          </li>
         ))}
       </ul>
     </>
   );
 }
+

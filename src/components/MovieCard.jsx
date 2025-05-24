@@ -1,17 +1,17 @@
+// src/components/MovieCard.jsx
 import React from 'react';
-import '../index.css';
 
-export default function MovieCard({ movie }) {
+export default function MovieCard({ poster, title, desc, meta }) {
   return (
-    <li className="movie-card">
-      <img src={movie.poster} alt={movie.title} />
-      <div className="content">
-        <h2 className="title">{movie.title}</h2>
-        <p className="desc">{movie.description}</p>
-        <p className="meta">
-          {movie.genre} — {new Date(movie.showtime).toLocaleString()}
-        </p>
+    <div
+      className="movie-card"
+      style={{ backgroundImage: `url(${poster})` }}
+    >
+      <div className="movie-info">
+        <h4 className="movie-title">{title}</h4>
+        <p className="movie-desc">{desc}</p>
+        <div className="movie-meta">{meta}</div>
       </div>
-    </li>
+    </div>
   );
 }

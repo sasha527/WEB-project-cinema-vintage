@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import MovieCard from './MovieCard';
 import { movies } from '../data/movies';
+import '../index.css';
 
 export default function MovieList() {
   const [query, setQuery] = useState('');
@@ -9,19 +10,19 @@ export default function MovieList() {
   );
 
   return (
-    <div>
+    <>
       <input
+        className="search-input"
         type="text"
         placeholder="Пошук фільму..."
         value={query}
         onChange={e => setQuery(e.target.value)}
-        className="w-full mb-6 p-2 border rounded"
       />
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <ul className="movie-list">
         {filtered.map(movie => (
           <MovieCard key={movie.id} movie={movie} />
         ))}
-      </div>
-    </div>
+      </ul>
+    </>
   );
 }

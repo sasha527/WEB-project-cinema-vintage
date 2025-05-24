@@ -1,28 +1,26 @@
 // src/App.jsx
 import React from 'react';
-import AboutCarousel from './components/AboutCarousel';
-import MovieList from './components/MovieList';
-import { movies } from './data/movies';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import Home from './pages/Home';
+import Booking from './pages/Booking';
+import NotFound from './pages/NotFound';
 
 export default function App() {
   return (
-    <>
-      <header className="parallax-header">
-        <div className="container header-content">
-          <h1 className="logo">Cinema Vintage</h1>
-          <p className="subtitle">Опера &amp; Кіно</p>
-        </div>
-      </header>
+    <BrowserRouter>
+     
 
-     {/* Про нас */}
-     <AboutCarousel />
+      <Routes>
+        {/* Головна сторінка з каталогом */}
+        <Route path="/" element={<Home />} />
 
-      <main className="catalog-section">
-        <div className="container main-content">
-          <h2 className="page-title">Каталог фільмів</h2>
-          <MovieList movies={movies} />
-        </div>
-      </main>
-    </>
+        {/* Сторінка бронювання для конкретного фільму */}
+        <Route path="/booking/:movieId" element={<Booking />} />
+
+        {/* Всі інші маршрути — 404 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
   );
 }

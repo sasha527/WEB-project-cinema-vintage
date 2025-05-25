@@ -97,6 +97,20 @@ body::before {
   display: grid;
   gap: 1.5rem;
 }
+
+.movie-list,           
+.movie-list ul {
+  list-style: none;     
+  margin: 0;
+  padding: 0;
+}
+.movie-list li {        
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+
 @media (min-width: 640px) {
   .movie-list { grid-template-columns: repeat(2, 1fr); }
 }
@@ -352,9 +366,9 @@ body::before {
   display: grid;
   grid-template-columns: repeat(8, 44px);
   gap: 0.5rem;
-  width: max-content;    /* ключ: дозволь гріду займати ширину, якої йому потрібно */
-  margin: 0 auto;        /* за бажанням центрування */
-  overflow-x: auto;      /* з’явиться горизонтальний скрол, якщо вікно вужче */
+  width: max-content;    
+  margin: 0 auto;        
+  overflow-x: auto;     
 }
 .seat-grid {
   display: grid;
@@ -363,13 +377,13 @@ body::before {
   width: max-content;
   margin: 0 auto;
   overflow-x: auto;
-   overflow-x: auto;        /* потрібна прокрутка */
-  -ms-overflow-style: none; /* IE/Edge */
-  scrollbar-width: none;    /* Firefox */
+   overflow-x: auto;        
+  -ms-overflow-style: none;
+  scrollbar-width: none;   
 }
 
 .seat-grid::-webkit-scrollbar {
-  display: none;           /* Chrome, Safari, Opera */
+  display: none;           
 }
 
 .seat {

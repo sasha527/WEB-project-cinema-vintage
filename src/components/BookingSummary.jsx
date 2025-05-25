@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // ⬅️ імпорт навігатора
 import { BookingContext } from '../pages/BookingContext';
 import { BookingService } from '../services/BookingService';
 import { toast } from 'react-toastify';
@@ -9,6 +10,7 @@ export default function BookingSummary({ movie }) {
   const [form, setForm] = useState({ email: '', phone: '', name: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate(); // ⬅️ створення навігатора
 
   const price = 8;
   const total = selected.length * price;
@@ -50,6 +52,11 @@ export default function BookingSummary({ movie }) {
 
       toggleSeat(seatToBook);
       setForm({ email: '', phone: '', name: '' });
+
+      // ⬇️ Перенаправлення через 1.5 сек щоб дати час показати toast
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
     } catch (err) {
       console.error(err);
       toast.error('Не вдалося зберегти бронювання');
@@ -63,7 +70,7 @@ export default function BookingSummary({ movie }) {
       <div className="summary-info">
         <h3>{movie.title}</h3>
         <p>Обрано місць: {selected.length > 0 ? selected.length : '0'}</p>
-        <p>Вартість: {selected.length * price} $</p>
+        <p>Вартість: {total} $</p>
       </div>
 
       <div className="summary-form">

@@ -11,12 +11,11 @@ export default function Booking() {
   const [step, setStep] = useState(1);
   const [bookedSeats, setBookedSeats] = useState([]);
 
-  // Підвантажуємо вже заброньовані місця з Firestore
   useEffect(() => {
     BookingService.getBookedSeats(movieId)
       .then(seats => setBookedSeats(seats))
       .catch(console.error);
-  }, [movieId]);
+  }, [movieId, step]);
 
   return (
     <div className="booking-page">

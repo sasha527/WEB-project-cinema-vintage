@@ -630,6 +630,57 @@ body::before {
   transform: translateY(0);
 }
 
+
+/* ================ MOVIE SECTIONS ================ */
+.movie-section {
+  margin-bottom: 4rem;
+}
+
+.section-heading {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 2rem;
+  text-align: center;
+  color: var(--gold);
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.section-heading::before,
+.section-heading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 30%;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--bordeaux), transparent);
+  z-index: -1;
+}
+.section-heading::before {
+  left: 0;
+}
+.section-heading::after {
+  right: 0;
+}
+
+.section-divider {
+  height: 8px;
+  background: repeating-linear-gradient(
+    45deg,
+    var(--dark-blue),
+    var(--dark-blue) 8px,
+    var(--bordeaux) 8px,
+    var(--bordeaux) 16px
+  );
+  border-top: 2px solid var(--gold);
+  border-bottom: 2px solid var(--gold);
+  margin: 3rem auto;
+  width: 80%;
+  border-radius: 2px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.8), inset 0 0 6px rgba(196,158,94,0.4);
+}
+
+
+
 @media (max-width: 640px) {
   .seat-grid {
     grid-template-columns: repeat(8, 40px);

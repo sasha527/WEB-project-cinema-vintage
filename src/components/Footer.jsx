@@ -10,7 +10,7 @@ export default function Footer() {
           © 2025 Cinema Vintage London
         </div>
         <div className="footer-section">
-          <Link to="/">Головна</Link> | <Link to="/booking/1">Бронювання</Link>
+          <Link to="/">Головна</Link>
         </div>
         <div className="footer-section">
           <a href="mailto:info@cinemavintage.co.uk">info@cinemavintage.co.uk</a><br/>

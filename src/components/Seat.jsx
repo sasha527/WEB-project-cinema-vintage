@@ -1,14 +1,24 @@
-// src/components/Seat.jsx
 import React from 'react';
 
 export default function Seat({ row, num, status, onToggle }) {
+  const handleClick = () => {
+    if (onToggle) {
+      onToggle({ row, num });
+    }
+  };
+
   return (
     <div
       className={`seat ${status}`}
-      onClick={() => status!=='booked' && onToggle({row, num})}
-      title={`Ряд ${row}, Місце ${num}`}
+      onClick={handleClick}
+      style={{ cursor: status === 'booked' ? 'not-allowed' : 'pointer' }}
+      title={
+        status === 'booked'
+          ? 'Вже заброньовано'
+          : `Ряд ${row}, місце ${num}`
+      }
     >
-      <span>{num}</span>
+      {num}
     </div>
   );
 }

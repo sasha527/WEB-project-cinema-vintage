@@ -7,10 +7,24 @@ import { movies } from '../data/movies';
 export default function Home() {
   return (
     <>
-      <header className="parallax-header">
-        <div className="container header-content">
-          <h1 className="logo">Cinema Vintage</h1>
-          <p className="subtitle">Опера &amp; Кіно</p>
+      <header className="opera-header">
+        <div className="container header-content with-ornaments">
+          <img
+            src="/images/ornament.svg"
+            alt="Орнамент лівий"
+            className="ornament ornament-left"
+          />
+
+          <div className="title-block">
+            <h1 className="logo">Cinema Vintage</h1>
+            <p className="subtitle">Опера &amp; Кіно</p>
+          </div>
+
+          <img
+            src="/images/ornament.svg"
+            alt="Орнамент правий"
+            className="ornament ornament-right"
+          />
         </div>
       </header>
 
@@ -25,3 +39,4 @@ export default function Home() {
     </>
   );
 }
+

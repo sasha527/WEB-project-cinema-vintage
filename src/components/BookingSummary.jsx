@@ -1,62 +1,81 @@
 import React, { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ⬅️ імпорт навігатора
 import { BookingContext } from '../pages/BookingContext';
 import { BookingService } from '../services/BookingService';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function BookingSummary({ movie }) {
   const { selected, clearSeats, toggleSeat } = useContext(BookingContext);
-  const [form, setForm] = useState({ email: '', phone: '', name: '' });
-  const [errors, setErrors] = useState({});
+  const [formList, setFormList] = useState(
+    selected.map(() => ({ name: '', phone: '', email: '' }))
+  );
+  const [errorsList, setErrorsList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // ⬅️ створення навігатора
+  const navigate = useNavigate();
 
   const price = 8;
   const total = selected.length * price;
 
   const validate = () => {
-    const newErrors = {};
+    const newErrors = [];
+    let isValid = true;
+    const phones = new Set();
+    const emails = new Set();
 
-    if (!/^[A-Za-zА-Яа-яІіЇїЄєҐґ'’\-\s]{2,50}$/.test(form.name)) {
-      newErrors.name = 'Введіть коректне ім’я (2-50 літер, без цифр)';
-    }
+    formList.forEach((form, index) => {
+      const errors = {};
 
-    if (!/^\+?[0-9\s\-]{7,20}$/.test(form.phone)) {
-      newErrors.phone = 'Введіть коректний номер телефону';
-    }
+      if (!/^[A-Za-zА-Яа-яІіЇїЄєҐґ'’\-\s]{2,50}$/.test(form.name)) {
+        errors.name = 'Введіть коректне ім’я (2-50 літер, без цифр)';
+        isValid = false;
+      }
 
-    if (!/^[\w.-]+@[\w.-]+\.[A-Za-z]{2,}$/.test(form.email)) {
-      newErrors.email = 'Введіть коректну електронну адресу';
-    }
+      if (!/^\+?[0-9\s\-]{7,20}$/.test(form.phone)) {
+        errors.phone = 'Введіть коректний номер телефону';
+        isValid = false;
+      } else if (phones.has(form.phone)) {
+        errors.phone = 'Номер телефону не може повторюватись';
+        isValid = false;
+      } else {
+        phones.add(form.phone);
+      }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+      if (!/^[\w.-]+@[\w.-]+\.[A-Za-z]{2,}$/.test(form.email)) {
+        errors.email = 'Введіть коректну електронну адресу';
+        isValid = false;
+      } else if (emails.has(form.email)) {
+        errors.email = 'Електронна адреса не може повторюватись';
+        isValid = false;
+      } else {
+        emails.add(form.email);
+      }
+
+      newErrors.push(errors);
+    });
+
+    setErrorsList(newErrors);
+    return isValid;
   };
 
   const handleSubmit = async e => {
     e.preventDefault();
-
-    if (selected.length === 0) {
-      toast.error('Оберіть місце для бронювання');
-      return;
-    }
-
     if (!validate()) return;
+
     setLoading(true);
 
     try {
-      const seatToBook = selected[0];
-      await BookingService.saveBooking(movie.id, [seatToBook], form);
-      toast.success(`Успішно заброньовано місце: ряд ${seatToBook.row}, місце ${seatToBook.num}`);
+      for (let i = 0; i < selected.length; i++) {
+        const seat = selected[i];
+        const form = formList[i];
 
-      toggleSeat(seatToBook);
-      setForm({ email: '', phone: '', name: '' });
+        await BookingService.saveBooking(movie.id, [seat], form);
+        toast.success(`Місце ${seat.row}-${seat.num} заброньовано на ім'я ${form.name}`);
+        toggleSeat(seat);
+      }
 
-      // ⬇️ Перенаправлення через 1.5 сек щоб дати час показати toast
-      setTimeout(() => {
-        navigate('/');
-      }, 1500);
+      clearSeats();
+      navigate('/');
     } catch (err) {
       console.error(err);
       toast.error('Не вдалося зберегти бронювання');
@@ -65,50 +84,62 @@ export default function BookingSummary({ movie }) {
     }
   };
 
+  const updateForm = (index, field, value) => {
+    const updated = [...formList];
+    updated[index][field] = value;
+    setFormList(updated);
+  };
+
   return (
     <form className="booking-summary" onSubmit={handleSubmit}>
       <div className="summary-info">
         <h3>{movie.title}</h3>
-        <p>Обрано місць: {selected.length > 0 ? selected.length : '0'}</p>
-        <p>Вартість: {total} $</p>
+        <p>Обрано місць: {selected.length}</p>
+        <p>Загальна вартість: {total} $</p>
       </div>
 
       <div className="summary-form">
-        <label>
-          Повне ім’я
-          <input
-            type="text"
-            value={form.name}
-            onChange={e => setForm({ ...form, name: e.target.value })}
-            required
-          />
-          {errors.name && <small className="form-error">{errors.name}</small>}
-        </label>
+        {selected.map((seat, index) => (
+          <div key={index} className="seat-form-block">
+            <h4>Місце {seat.row}-{seat.num}</h4>
 
-        <label>
-          Телефон
-          <input
-            type="tel"
-            value={form.phone}
-            onChange={e => setForm({ ...form, phone: e.target.value })}
-            required
-          />
-          {errors.phone && <small className="form-error">{errors.phone}</small>}
-        </label>
+            <label>
+              Ім’я
+              <input
+                type="text"
+                value={formList[index].name}
+                onChange={e => updateForm(index, 'name', e.target.value)}
+                required
+              />
+              {errorsList[index]?.name && <small className="form-error">{errorsList[index].name}</small>}
+            </label>
 
-        <label>
-          Електронна скринька
-          <input
-            type="email"
-            value={form.email}
-            onChange={e => setForm({ ...form, email: e.target.value })}
-            required
-          />
-          {errors.email && <small className="form-error">{errors.email}</small>}
-        </label>
+            <label>
+              Телефон
+              <input
+                type="tel"
+                value={formList[index].phone}
+                onChange={e => updateForm(index, 'phone', e.target.value)}
+                required
+              />
+              {errorsList[index]?.phone && <small className="form-error">{errorsList[index].phone}</small>}
+            </label>
+
+            <label>
+              Електронна пошта
+              <input
+                type="email"
+                value={formList[index].email}
+                onChange={e => updateForm(index, 'email', e.target.value)}
+                required
+              />
+              {errorsList[index]?.email && <small className="form-error">{errorsList[index].email}</small>}
+            </label>
+          </div>
+        ))}
 
         <button type="submit" className="btn-next btn-data" disabled={loading}>
-          {loading ? 'Зберігаємо...' : 'Підтвердити бронювання'}
+          {loading ? 'Збереження...' : 'Підтвердити бронювання'}
         </button>
       </div>
     </form>

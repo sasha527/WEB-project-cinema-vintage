@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, Navigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { movies } from '../data/movies';
 import CinemaHall from '../components/CinemaHall';
 import BookingSummary from '../components/BookingSummary';
@@ -10,6 +11,14 @@ export default function Booking() {
   const movie = movies.find(m => m.id === +movieId);
   const [step, setStep] = useState(1);
   const [bookedSeats, setBookedSeats] = useState([]);
+
+  // Якщо фільм не знайдено — повідомлення і редірект
+  useEffect(() => {
+    if (!movie) {
+      toast.dismiss();
+      toast.error('Фільм не знайдено');
+    }
+  }, [movie]);
 
   // Завантаження місць
   const fetchSeats = async () => {
@@ -22,12 +31,15 @@ export default function Booking() {
   };
 
   useEffect(() => {
-    fetchSeats(); // перше завантаження
+    if (movie) {
+      fetchSeats(); // перше завантаження
+      const interval = setInterval(fetchSeats, 5000); // полінг
+      return () => clearInterval(interval); // очистка
+    }
+  }, [movieId, movie]);
 
-    // полінг: кожні 5 секунд
-    const interval = setInterval(fetchSeats, 5000);
-    return () => clearInterval(interval); // очистка при виході
-  }, [movieId]);
+  // Редірект на NotFound, якщо немає такого фільму
+  if (!movie) return <Navigate to="/not-found" replace />;
 
   return (
     <div className="booking-page">
@@ -67,3 +79,4 @@ export default function Booking() {
     </div>
   );
 }
+

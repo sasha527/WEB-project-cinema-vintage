@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function BookingSummary({ movie }) {
-  const { selected, clearSeats } = useContext(BookingContext);
+  const { selected, clearSeats, toggleSeat } = useContext(BookingContext);
   const [form, setForm] = useState({ email: '', phone: '', name: '' });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -20,8 +20,8 @@ export default function BookingSummary({ movie }) {
       newErrors.name = 'Введіть коректне ім’я (2-50 літер, без цифр)';
     }
 
-   if (!/^\+?[0-9\s\-]{7,20}$/.test(form.phone)) {
-        newErrors.phone = 'Введіть коректний номер телефону';
+    if (!/^\+?[0-9\s\-]{7,20}$/.test(form.phone)) {
+      newErrors.phone = 'Введіть коректний номер телефону';
     }
 
     if (!/^[\w.-]+@[\w.-]+\.[A-Za-z]{2,}$/.test(form.email)) {
@@ -34,17 +34,26 @@ export default function BookingSummary({ movie }) {
 
   const handleSubmit = async e => {
     e.preventDefault();
+
+    if (selected.length === 0) {
+      toast.error('Оберіть місце для бронювання');
+      return;
+    }
+
     if (!validate()) return;
     setLoading(true);
 
     try {
-      await BookingService.saveBooking(movie.id, selected, form);
-      toast.success(`Успішно заброньовано ${selected.length} місце/місць!`);
-      clearSeats();
-      setLoading(false);
+      const seatToBook = selected[0];
+      await BookingService.saveBooking(movie.id, [seatToBook], form);
+      toast.success(`Успішно заброньовано місце: ряд ${seatToBook.row}, місце ${seatToBook.num}`);
+
+      toggleSeat(seatToBook);
+      setForm({ email: '', phone: '', name: '' });
     } catch (err) {
       console.error(err);
       toast.error('Не вдалося зберегти бронювання');
+    } finally {
       setLoading(false);
     }
   };
@@ -53,8 +62,8 @@ export default function BookingSummary({ movie }) {
     <form className="booking-summary" onSubmit={handleSubmit}>
       <div className="summary-info">
         <h3>{movie.title}</h3>
-        <p>Місця: {selected.map(s => `${s.row}-${s.num}`).join(', ')}</p>
-        <p>Вартість: {total} $</p>
+        <p>Обрано місць: {selected.length > 0 ? selected.length : '0'}</p>
+        <p>Вартість: {selected.length * price} $</p>
       </div>
 
       <div className="summary-form">

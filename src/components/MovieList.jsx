@@ -4,9 +4,23 @@ import MovieCard from './MovieCard';
 
 export default function MovieList({ movies }) {
   const [query, setQuery] = useState('');
-  const filtered = movies.filter(m =>
-    m.title.toLowerCase().includes(query.toLowerCase())
-  );
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [genre, setGenre] = useState('');
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+
+  const toggleFilter = () => setFilterOpen(prev => !prev);
+
+  const allGenres = Array.from(new Set(movies.map(m => m.genre))).sort();
+
+  const filtered = movies.filter(m => {
+    const matchesQuery = m.title.toLowerCase().includes(query.toLowerCase());
+    const matchesGenre = genre ? m.genre === genre : true;
+    const movieDate = new Date(m.time);
+    const matchesFrom = fromDate ? movieDate >= new Date(fromDate) : true;
+    const matchesTo = toDate ? movieDate <= new Date(toDate) : true;
+    return matchesQuery && matchesGenre && matchesFrom && matchesTo;
+  });
 
   const now = new Date();
   const weekFromNow = new Date();
@@ -17,13 +31,40 @@ export default function MovieList({ movies }) {
 
   return (
     <>
-      <input
-        className="search-input"
-        type="text"
-        placeholder="Пошук фільму..."
-        value={query}
-        onChange={e => setQuery(e.target.value)}
-      />
+      <div className="search-bar-with-filter">
+        <input
+          className="search-input"
+          type="text"
+          placeholder="Пошук фільму..."
+          value={query}
+          onChange={e => setQuery(e.target.value)}
+        />
+        <button className="filter-toggle" onClick={toggleFilter}>
+         <img src="/icons/filter-gothic.svg" alt="Фільтр" />
+        </button>
+      </div>
+
+      {filterOpen && (
+        <div className="filter-menu gothic-style">
+          <label>
+            Жанр: 
+            <select value={genre} onChange={e => setGenre(e.target.value)}>
+              <option value="">Усі</option>
+              {allGenres.map(g => (
+                <option key={g} value={g}>{g}</option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Від:
+            <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)} />
+          </label>
+          <label>
+            До:
+            <input type="date" value={toDate} onChange={e => setToDate(e.target.value)} />
+          </label>
+        </div>
+      )}
 
       {currentMovies.length > 0 && (
         <>
@@ -37,13 +78,7 @@ export default function MovieList({ movies }) {
               const meta = `${movie.genre} • ${time}`;
               return (
                 <li key={movie.id}>
-                  <MovieCard
-                    id={movie.id}
-                    poster={movie.poster}
-                    title={movie.title}
-                    desc={movie.desc}
-                    meta={meta}
-                  />
+                  <MovieCard {...movie} meta={meta} />
                 </li>
               );
             })}
@@ -64,13 +99,7 @@ export default function MovieList({ movies }) {
               const meta = `${movie.genre} • ${time}`;
               return (
                 <li key={movie.id}>
-                  <MovieCard
-                    id={movie.id}
-                    poster={movie.poster}
-                    title={movie.title}
-                    desc={movie.desc}
-                    meta={meta}
-                  />
+                  <MovieCard {...movie} meta={meta} />
                 </li>
               );
             })}

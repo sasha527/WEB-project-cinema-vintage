@@ -5,7 +5,6 @@ import Seat from './Seat';
 export default function CinemaHall({ rows, cols, bookedSeats = [], onNext }) {
   const { selected, toggleSeat } = useContext(BookingContext);
 
-  // Створюємо матрицю місць
   const grid = Array.from({ length: rows }, (_, i) =>
     Array.from({ length: cols }, (_, j) => ({ row: i + 1, num: j + 1 }))
   );
@@ -29,7 +28,6 @@ export default function CinemaHall({ rows, cols, bookedSeats = [], onNext }) {
                   row={row}
                   num={num}
                   status={status}
-                  // Забороняємо кліки по вже заброньованих
                   onToggle={isBooked ? undefined : toggleSeat}
                 />
               );

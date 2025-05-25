@@ -11,11 +11,23 @@ export default function Booking() {
   const [step, setStep] = useState(1);
   const [bookedSeats, setBookedSeats] = useState([]);
 
+  // Завантаження місць
+  const fetchSeats = async () => {
+    try {
+      const seats = await BookingService.getBookedSeats(movieId);
+      setBookedSeats(seats);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
-    BookingService.getBookedSeats(movieId)
-      .then(seats => setBookedSeats(seats))
-      .catch(console.error);
-  }, [movieId, step]);
+    fetchSeats(); // перше завантаження
+
+    // полінг: кожні 5 секунд
+    const interval = setInterval(fetchSeats, 5000);
+    return () => clearInterval(interval); // очистка при виході
+  }, [movieId]);
 
   return (
     <div className="booking-page">
@@ -33,10 +45,7 @@ export default function Booking() {
             <p>Дата: {new Date(movie.time).toLocaleString()}</p>
             <p>Формат: 2D</p>
             <p>Зала: Головна зала</p>
-            <button
-              className="btn-next"
-              onClick={() => setStep(2)}
-            >
+            <button className="btn-next" onClick={() => setStep(2)}>
               Обрати місце
             </button>
           </div>
